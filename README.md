@@ -29,8 +29,9 @@ Aplicación web desarrollada con Nuxt 4, Vue 3, TypeScript y Composition API, qu
 2. **Variables de Entorno:**
    Crear un archivo `.env` en la raíz del proyecto (basado en el archivo generado automáticamente) e incluir tu API Key de OpenWeatherMap:
    ```env
-   OPENWEATHER_API_KEY=tu_api_key_aqui
+   NUXT_OPENWEATHER_API_KEY=tu_api_key_aqui
    ```
+   El proyecto usa `runtimeConfig` para proteger la API Key y no exponerla al frontend.
 
 3. **Ejecución Local (Desarrollo):**
    ```bash
