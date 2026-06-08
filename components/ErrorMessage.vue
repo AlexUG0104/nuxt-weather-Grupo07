@@ -1,7 +1,11 @@
 <template>
   <div class="error-card" role="alert">
-    <!-- Glow -->
+
+    <!-- Background glow -->
     <div class="error-glow" aria-hidden="true"></div>
+
+    <!-- Top accent -->
+    <div class="error-topbar" aria-hidden="true"></div>
 
     <!-- Icon -->
     <div class="error-icon-wrap" aria-hidden="true">
@@ -18,13 +22,14 @@
       <p class="error-message">{{ message }}</p>
     </div>
 
-    <!-- Hint -->
+    <!-- Hint row -->
     <div class="error-hint">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="hint-icon">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/>
       </svg>
       <span>Verifica el nombre de la ciudad e intenta de nuevo</span>
     </div>
+
   </div>
 </template>
 
@@ -38,60 +43,64 @@ defineProps<{
 /* ── Card ──────────────────────────────────── */
 .error-card {
   position: relative;
-  background: rgba(248, 113, 113, 0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(248, 113, 113, 0.18);
+  background: rgba(248, 113, 113, 0.055);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(248, 113, 113, 0.20);
+  border-top-color: rgba(248, 113, 113, 0.35);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 28px 24px 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   overflow: hidden;
-  animation: slideIn 0.35s var(--ease-out) both;
+  animation: scaleIn 0.4s var(--ease-out) both;
+  box-shadow:
+    0 12px 40px rgba(248, 113, 113, 0.12),
+    0 0 0 1px rgba(248,113,113,0.08) inset;
 }
 
-/* Top border accent */
-.error-card::before {
-  content: '';
+/* Gradient top bar */
+.error-topbar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #f87171, #fbbf24);
+  height: 3px;
+  background: linear-gradient(90deg, #f87171, #fbbf24, #f87171);
+  background-size: 200% 100%;
+  animation: gradientFlow 3s ease infinite;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 /* ── Glow ──────────────────────────────────── */
 .error-glow {
   position: absolute;
-  top: -30px;
-  right: -30px;
-  width: 160px;
-  height: 160px;
-  background: radial-gradient(circle, rgba(248,113,113,0.25), transparent 70%);
+  top: -40px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(248,113,113,0.22), transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
 
 /* ── Icon ──────────────────────────────────── */
 .error-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(248, 113, 113, 0.14);
-  border: 1px solid rgba(248, 113, 113, 0.20);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-error);
   flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(248,113,113,0.15);
 }
 
-.error-icon-wrap svg {
-  width: 22px;
-  height: 22px;
-}
+.error-icon-wrap svg { width: 24px; height: 24px; }
 
 /* ── Content ───────────────────────────────── */
 .error-content {
@@ -102,16 +111,17 @@ defineProps<{
 
 .error-title {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #fca5a5;
   margin: 0;
+  letter-spacing: -0.2px;
 }
 
 .error-message {
-  font-size: 0.88rem;
-  color: rgba(252, 165, 165, 0.75);
-  line-height: 1.55;
+  font-size: 0.87rem;
+  color: rgba(252, 165, 165, 0.72);
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -119,28 +129,17 @@ defineProps<{
 .error-hint {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.78rem;
-  color: rgba(248, 113, 113, 0.55);
-  padding-top: 4px;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: rgba(248, 113, 113, 0.50);
+  padding-top: 8px;
   border-top: 1px solid rgba(248, 113, 113, 0.10);
+  line-height: 1.4;
 }
 
 .hint-icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-}
-
-/* ── Animation ─────────────────────────────── */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style>

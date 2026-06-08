@@ -12,6 +12,7 @@
           </svg>
         </div>
         <h3 class="history-title">Búsquedas recientes</h3>
+        <span class="history-count">{{ history.length }}</span>
       </div>
       <button @click="$emit('clear')" class="clear-btn" id="clear-history-btn" type="button">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,9 +28,10 @@
     <!-- Chips -->
     <ul class="history-chips" role="list">
       <li
-        v-for="item in history"
+        v-for="(item, index) in history"
         :key="item.date"
         class="chip-item"
+        :style="{ '--delay': `${index * 0.04}s` }"
       >
         <button
           class="chip"
@@ -71,16 +73,34 @@ const formatDate = (isoString: string) => {
 <style scoped>
 /* ── Panel ─────────────────────────────────── */
 .history-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.028);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.07);
+  border-top-color: rgba(255,255,255,0.12);
   border-radius: var(--radius-xl);
-  padding: 22px 24px;
-  animation: fadeInUp 0.4s var(--ease-out) both;
+  padding: 22px 24px 20px;
+  animation: fadeInUp 0.45s var(--ease-out) both;
 }
 
-/* ── Header ────────────────────────────────── */
+/* Subtle top accent line */
+.history-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(167,139,250,0.45), transparent);
+  border-radius: var(--radius-full);
+}
+
+.history-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Header ─────────────────────────────────── */
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -97,8 +117,9 @@ const formatDate = (isoString: string) => {
 .history-icon-wrap {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: 9px;
   background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167,139,250,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,48 +127,60 @@ const formatDate = (isoString: string) => {
   flex-shrink: 0;
 }
 
-.history-icon-wrap svg {
-  width: 15px;
-  height: 15px;
-}
+.history-icon-wrap svg { width: 14px; height: 14px; }
 
 .history-title {
   font-family: var(--font-display);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text-muted);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 }
 
-/* ── Clear button ──────────────────────────── */
+.history-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* ── Clear button ───────────────────────────── */
 .clear-btn {
   display: flex;
   align-items: center;
   gap: 6px;
   background: none;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 500;
   color: var(--color-text-subtle);
-  padding: 5px 10px;
+  padding: 5px 11px;
   border-radius: var(--radius-sm);
-  transition: background var(--duration-fast) ease,
-              color var(--duration-fast) ease;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast),
+    color var(--duration-fast);
 }
 
 .clear-btn:hover {
-  background: rgba(248, 113, 113, 0.10);
+  background: rgba(248, 113, 113, 0.09);
+  border-color: rgba(248, 113, 113, 0.22);
   color: var(--color-error);
 }
 
-.clear-btn svg {
-  width: 13px;
-  height: 13px;
-}
+.clear-btn svg { width: 12px; height: 12px; }
 
-/* ── Chips list ────────────────────────────── */
+/* ── Chips list ─────────────────────────────── */
 .history-chips {
   list-style: none;
   display: flex;
@@ -156,39 +189,33 @@ const formatDate = (isoString: string) => {
 }
 
 .chip-item {
-  animation: slideInLeft 0.3s var(--ease-out) both;
+  animation: slideInLeft 0.3s var(--ease-out) var(--delay, 0s) both;
 }
 
-/* Stagger delay for each chip */
-.chip-item:nth-child(1) { animation-delay: 0.02s; }
-.chip-item:nth-child(2) { animation-delay: 0.06s; }
-.chip-item:nth-child(3) { animation-delay: 0.10s; }
-.chip-item:nth-child(4) { animation-delay: 0.14s; }
-.chip-item:nth-child(5) { animation-delay: 0.18s; }
-
-/* ── Single chip ───────────────────────────── */
+/* ── Single chip ────────────────────────────── */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 7px 14px 7px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(99,102,241,0.06);
+  border: 1px solid rgba(99,102,241,0.15);
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: background var(--duration-fast) ease,
-              border-color var(--duration-fast) ease,
-              transform var(--duration-base) var(--ease-smooth),
-              box-shadow var(--duration-base) ease;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast),
+    transform var(--duration-base) var(--ease-smooth),
+    box-shadow var(--duration-base);
   text-align: left;
   font-family: var(--font-body);
 }
 
 .chip:hover {
-  background: rgba(91, 156, 246, 0.10);
-  border-color: rgba(91, 156, 246, 0.30);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 4px 16px rgba(91, 156, 246, 0.15);
+  background: rgba(99,102,241,0.14);
+  border-color: rgba(99,102,241,0.38);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(99,102,241,0.18);
 }
 
 .chip:active {
@@ -199,12 +226,12 @@ const formatDate = (isoString: string) => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--gradient-brand);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-cyan));
   flex-shrink: 0;
 }
 
 .chip-city {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--color-text);
   text-transform: capitalize;
@@ -212,8 +239,9 @@ const formatDate = (isoString: string) => {
 }
 
 .chip-time {
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   color: var(--color-text-subtle);
   font-weight: 400;
+  font-family: var(--font-display);
 }
 </style>
