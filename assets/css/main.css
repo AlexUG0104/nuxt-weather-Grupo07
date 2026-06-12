@@ -100,17 +100,18 @@ body::after {
   content: '';
   position: fixed;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.20;
+  filter: blur(100px);
+  opacity: 0.18;
   pointer-events: none;
   z-index: 0;
   animation: orbFloat 12s ease-in-out infinite alternate;
+  transition: background 1.5s ease, opacity 1.5s ease;
 }
 
 body::before {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, #5b9cf6, transparent 70%);
+  background: radial-gradient(circle, var(--weather-primary, #5b9cf6), transparent 70%);
   top: -200px;
   left: -150px;
   animation-delay: 0s;
@@ -119,7 +120,7 @@ body::before {
 body::after {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #a78bfa, transparent 70%);
+  background: radial-gradient(circle, var(--weather-accent, #a78bfa), transparent 70%);
   bottom: -150px;
   right: -100px;
   animation-delay: -6s;

@@ -1,10 +1,9 @@
-import { ref } from 'vue';
 import type { WeatherResponse, WeatherError } from '~/types/weather';
 
 export const useWeather = () => {
-  const weather = ref<WeatherResponse | null>(null);
-  const loading = ref<boolean>(false);
-  const error = ref<WeatherError | null>(null);
+  const weather = useState<WeatherResponse | null>('current-weather', () => null);
+  const loading = useState<boolean>('weather-loading', () => false);
+  const error = useState<WeatherError | null>('weather-error', () => null);
 
   const searchWeather = async (city: string) => {
     if (!city.trim()) return;

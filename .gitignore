@@ -1,2 +1,6 @@
 node_modules
 .env
+.nuxt
+.output
+dist
+.nuxt/
