@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
   const apiKey = config.openweatherApiKey;
 
-  if (!apiKey || apiKey === 'tu_api_key_aqui') {
+  if (!apiKey || apiKey === 'e56c05a7e0f10308164de3f5fbef551c') {
     throw createError({
       statusCode: 500,
       statusMessage: 'La API Key de OpenWeatherMap no está configurada.',

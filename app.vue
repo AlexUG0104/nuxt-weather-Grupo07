@@ -3,6 +3,12 @@
     <!-- Decorative grid overlay -->
     <div class="grid-overlay" aria-hidden="true"></div>
 
+    <!-- Star field background -->
+    <div class="starfield" aria-hidden="true"></div>
+
+    <!-- Floating orb extra -->
+    <div class="orb-extra" aria-hidden="true"></div>
+
     <!-- Atmospheric Weather Effects -->
     <div class="atmosphere-overlay" aria-hidden="true">
       <!-- Rain Effect -->
@@ -136,6 +142,22 @@ const getCloudStyle = (index: number) => {
   background-size: 36px 36px;
   pointer-events: none;
   z-index: 1; /* Place above background effects, below content */
+}
+
+/* Extra floating orb (bottom-right) */
+.orb-extra {
+  position: fixed;
+  bottom: -180px;
+  right: -120px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle at 60% 60%, var(--weather-accent, rgba(34,211,238,0.14)), transparent 65%);
+  filter: blur(50px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: orbFloat 22s ease-in-out infinite alternate-reverse;
+  transition: background 1.5s ease;
 }
 
 /* ── Atmosphere overlays ────────────────────────── */
