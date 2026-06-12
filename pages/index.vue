@@ -158,9 +158,16 @@ const updateClock = () => {
   }).format(new Date());
 };
 
+const DEFAULT_CITY = 'San José';
+
 onMounted(() => {
   updateClock();
   clockInterval = setInterval(updateClock, 1000);
+
+  // Carga ciudad por defecto si no hay clima previo
+  if (!weather.value) {
+    handleSearch(DEFAULT_CITY);
+  }
 });
 
 onUnmounted(() => clearInterval(clockInterval));
