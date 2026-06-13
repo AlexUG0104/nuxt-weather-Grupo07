@@ -1,13 +1,10 @@
 <template>
   <div class="error-card" role="alert">
 
-    <!-- Background glow -->
     <div class="error-glow" aria-hidden="true"></div>
 
-    <!-- Top accent -->
     <div class="error-topbar" aria-hidden="true"></div>
 
-    <!-- Icon -->
     <div class="error-icon-wrap" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -16,13 +13,19 @@
       </svg>
     </div>
 
-    <!-- Content -->
     <div class="error-content">
       <h3 class="error-title">Ha ocurrido un error</h3>
       <p class="error-message">{{ message }}</p>
+      
+      <button @click="$emit('retry')" class="retry-btn" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        Reintentar búsqueda
+      </button>
     </div>
 
-    <!-- Hint row -->
     <div class="error-hint">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="hint-icon">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/>
@@ -36,6 +39,11 @@
 <script setup lang="ts">
 defineProps<{
   message: string;
+}>();
+
+// Declaramos el evento en TypeScript
+defineEmits<{
+  (e: 'retry'): void;
 }>();
 </script>
 
@@ -95,7 +103,7 @@ defineProps<{
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-error);
+  color: var(--color-error, #f87171);
   flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(248,113,113,0.15);
 }
@@ -123,6 +131,45 @@ defineProps<{
   color: rgba(252, 165, 165, 0.72);
   line-height: 1.6;
   margin: 0;
+}
+
+/* ── NUEVO: Botón Reintentar ───────────────── */
+.retry-btn {
+  margin-top: 10px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  color: #f87171;
+  border-radius: var(--radius-base, 8px);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.4);
+  transform: translateY(-2px);
+}
+
+.retry-btn:hover svg {
+  transform: rotate(180deg);
+}
+
+.retry-btn:active {
+  transform: translateY(0) scale(0.96);
 }
 
 /* ── Hint ──────────────────────────────────── */

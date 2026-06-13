@@ -68,7 +68,7 @@
       <section class="results-section" aria-live="polite">
         <Transition name="fade-up" mode="out-in">
           <LoadingSpinner v-if="loading"    key="loading" />
-          <ErrorMessage  v-else-if="error" :message="error.message" key="error" />
+          <ErrorMessage v-else-if="error" :message="error.message" @retry="handleRetry" key="error" />
           <WeatherCard   v-else-if="weather" :weather="weather" key="card" />
           <div v-else class="empty-state" key="empty">
             <div class="empty-globe" aria-hidden="true">
@@ -142,9 +142,20 @@ const { history, saveSearch, clearHistory } = useSearchHistory();
 
 const suggestedCities = ['San José', 'Madrid', 'Tokyo', 'New York', 'París'];
 
+// NUEVO: Variable para recordar la última búsqueda
+const lastQuery = ref<string>('');
+
 const handleSearch = async (city: string) => {
+  lastQuery.value = city; // Guardamos el intento
   const success = await searchWeather(city);
   if (success) saveSearch(city);
+};
+
+// NUEVO: Función para reintentar
+const handleRetry = () => {
+  if (lastQuery.value) {
+    handleSearch(lastQuery.value);
+  }
 };
 
 /* Live clock */
@@ -172,7 +183,6 @@ onMounted(() => {
 
 onUnmounted(() => clearInterval(clockInterval));
 </script>
-
 <style scoped>
 /* ── Layout ─────────────────────────────────────────── */
 .page-wrapper {
