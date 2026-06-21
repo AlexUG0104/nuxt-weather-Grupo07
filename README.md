@@ -2,6 +2,10 @@
 
 Aplicación web meteorológica de alta fidelidad desarrollada con **Nuxt 4**, **Vue 3**, **TypeScript** y **Composition API**, que permite consultar el clima actual de cualquier ciudad utilizando la API de OpenWeatherMap.
 
+### 🌐 Demo en Vivo (Despliegue Vercel)
+Accede a la versión en producción a través del siguiente enlace:
+👉 **[nuxt-weather-grupo07.vercel.app](https://nuxt-weather-grupo07.vercel.app/)**
+
 ---
 
 ## 🚀 Tecnologías Utilizadas
