@@ -42,6 +42,97 @@ Aplicación web meteorológica de alta fidelidad desarrollada con **Nuxt 4**, **
 - **SSR / CSR Hybrid Behavior**: Carga inicial del framework del lado del servidor (SSR) combinada con hidratación y almacenamiento persistente (localStorage) en el cliente (CSR) mediante banderas seguras `import.meta.client`.
 
 ---
+## 📚 ¿Qué es Nuxt 4 y cómo funciona?
+
+Nuxt 4 es un framework de desarrollo web moderno construido sobre Vue.js que permite crear aplicaciones escalables, organizadas y de alto rendimiento. Su objetivo principal es simplificar el desarrollo mediante una estructura basada en convenciones, reduciendo la necesidad de configuraciones manuales y facilitando el mantenimiento del código.
+
+A diferencia de utilizar Vue.js de forma tradicional, Nuxt incorpora herramientas integradas para el manejo de rutas, componentes, consumo de APIs, renderizado híbrido y configuración del servidor. Gracias a esto, los desarrolladores pueden enfocarse más en la lógica de negocio y menos en tareas de infraestructura.
+
+### Arquitectura utilizada en este proyecto
+
+La aplicación sigue la arquitectura recomendada por Nuxt 4:
+
+* **pages/**: Define automáticamente las rutas del sistema.
+* **components/**: Contiene componentes reutilizables para la interfaz.
+* **composables/**: Centraliza la lógica de negocio reutilizable.
+* **server/api/**: Implementa endpoints internos ejecutados en el servidor.
+* **assets/**: Almacena estilos globales y recursos visuales.
+* **types/**: Define interfaces TypeScript para mantener tipado estricto.
+
+Esta organización facilita la escalabilidad y el mantenimiento del proyecto.
+
+### Renderizado Híbrido (SSR + CSR)
+
+Nuxt permite combinar renderizado del lado del servidor (SSR) y renderizado del lado del cliente (CSR).
+
+En este proyecto:
+
+* El framework genera la aplicación utilizando SSR para optimizar la carga inicial.
+* La información meteorológica y el historial utilizan CSR para interactuar dinámicamente con el usuario.
+* El almacenamiento local se maneja mediante `localStorage`, disponible únicamente del lado cliente.
+
+Este enfoque híbrido permite obtener un buen rendimiento sin sacrificar interactividad.
+
+### Consumo de API en Nuxt 4
+
+La aplicación consume información meteorológica desde OpenWeatherMap utilizando una arquitectura segura basada en Server API Routes.
+
+El flujo de funcionamiento es el siguiente:
+
+1. El usuario ingresa una ciudad.
+2. El frontend envía una solicitud al endpoint interno `/api/weather`.
+3. Nuxt procesa la solicitud desde el servidor.
+4. El servidor consulta OpenWeatherMap utilizando la API Key privada.
+5. OpenWeatherMap responde con datos en formato JSON.
+6. Nuxt devuelve únicamente la información necesaria al cliente.
+7. La interfaz actualiza automáticamente los resultados gracias al sistema reactivo de Vue.
+
+Este enfoque evita exponer la API Key en el navegador y mejora la seguridad de la aplicación.
+
+### Manejo de Estados
+
+Durante el consumo de la API se implementan tres estados fundamentales:
+
+#### Estado de carga (Loading)
+
+Mientras se espera la respuesta del servidor se muestra un spinner animado y una barra de progreso visual para informar al usuario que la consulta se encuentra en ejecución.
+
+#### Estado de error
+
+Si ocurre un problema como una ciudad inexistente, una falla de red o un error de autenticación, el sistema muestra mensajes amigables para facilitar la recuperación.
+
+#### Estado exitoso
+
+Cuando la solicitud finaliza correctamente, los datos se almacenan en estructuras reactivas y la interfaz se actualiza automáticamente sin necesidad de recargar la página.
+
+### Seguridad de la API Key
+
+La API de OpenWeatherMap requiere una API Key para autorizar las solicitudes.
+
+Por motivos de seguridad:
+
+* La clave no se almacena en el código fuente.
+* La clave no se expone en el navegador.
+* La clave se almacena mediante variables de entorno (`.env`).
+* El acceso se realiza mediante `runtimeConfig`.
+* Las consultas externas se ejecutan únicamente desde el servidor.
+
+Este mecanismo protege las credenciales y sigue las buenas prácticas recomendadas para aplicaciones modernas.
+
+### Casos de uso de Nuxt 4
+
+Nuxt es ampliamente utilizado para desarrollar:
+
+* Sitios web empresariales.
+* Aplicaciones SaaS.
+* Dashboards administrativos.
+* Sistemas de comercio electrónico.
+* Blogs y periódicos digitales.
+* Aplicaciones Full Stack con frontend y backend integrados.
+
+Su flexibilidad y rendimiento lo convierten en una de las soluciones más utilizadas dentro del ecosistema Vue.
+
+---
 
 ## ⚖️ Ventajas y Desventajas de Nuxt 4
 
