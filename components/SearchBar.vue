@@ -22,6 +22,7 @@
           v-model="searchQuery"
           placeholder="Ej: San José, Madrid, Tokyo..."
           @keyup.enter="handleSearch"
+          @keydown.esc="searchQuery = ''"
           @focus="isFocused = true"
           @blur="isFocused = false"
           class="search-input"

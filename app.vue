@@ -30,6 +30,9 @@
       </div>
     </div>
 
+    <!-- Navigation Bar -->
+    <AppNavbar />
+
     <!-- Page content -->
     <NuxtPage />
   </div>

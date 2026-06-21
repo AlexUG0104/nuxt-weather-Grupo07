@@ -50,14 +50,21 @@ A diferencia de utilizar Vue.js de forma tradicional, Nuxt incorpora herramienta
 
 ### Arquitectura utilizada en este proyecto
 
-La aplicación sigue la arquitectura recomendada por Nuxt 4:
+La aplicación sigue la arquitectura multipágina y modular recomendada por Nuxt 4:
 
-* **pages/**: Define automáticamente las rutas del sistema.
-* **components/**: Contiene componentes reutilizables para la interfaz.
-* **composables/**: Centraliza la lógica de negocio reutilizable.
-* **server/api/**: Implementa endpoints internos ejecutados en el servidor.
-* **assets/**: Almacena estilos globales y recursos visuales.
-* **types/**: Define interfaces TypeScript para mantener tipado estricto.
+* **pages/**: Define automáticamente el enrutamiento de la aplicación:
+  - `pages/index.vue`: Página principal (Home) estilo Landing Page SaaS.
+  - `pages/weather.vue`: Aplicación meteorológica interactiva con todas las funcionalidades de consulta.
+* **components/**: Componentes interactivos reutilizables:
+  - `components/AppNavbar.vue`: Menú superior de navegación global.
+  - `components/HomeHero.vue`: Banner principal de presentación con llamadas a la acción (CTA).
+  - `components/FeaturesSection.vue`: Desglose visual de características y ventajas en formato grid.
+  - `components/FooterSection.vue`: Pie de página académico integrado.
+  - Componentes meteorológicos existentes (`SearchBar.vue`, `WeatherCard.vue`, `SearchHistory.vue`, `LoadingSpinner.vue`, `ErrorMessage.vue`).
+* **composables/**: Centraliza la lógica de negocio reutilizable (`useWeather` y `useSearchHistory`).
+* **server/api/**: Proxy seguro ejecutado en servidor (`weather.get.ts`) para proteger la API Key.
+* **assets/**: Estilos globales encapsulados (`index.css`).
+* **types/**: Interfaces estrictas TypeScript (`weather.ts`).
 
 Esta organización facilita la escalabilidad y el mantenimiento del proyecto.
 
