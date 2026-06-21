@@ -188,6 +188,8 @@ Muestra la interfaz inicial con fondo atmosférico estrellado y chips de sugeren
 ### 2. Tarjeta de Clima - San José, Costa Rica
 Renderizado de la tarjeta meteorológica con hora local calculada, badge nacional traducido, dirección del viento, amanecer/atardecer local y el banner dinámico de sugerencias.
 
+
+
 ![Clima de San José, Costa Rica](public/screenshots/clima_sanjose.png)
 
 ### 3. Estado de Carga (Loading Radar Spinner)
