@@ -2,15 +2,19 @@
 
 A continuación se listan las fuentes oficiales y recursos consultados para el desarrollo de esta aplicación:
 
-1. **Nuxt 3 / 4 Documentation - Configuration & Features:**
+1. **Nuxt 4 Documentation - Getting Started (v4.0):**
    *URL:* https://nuxt.com/docs/getting-started/introduction
-   *Uso:* Base para la configuración de Nuxt, Server Routes y Runtime Config.
+   *Uso:* Documentación oficial para la instalación y configuración inicial de Nuxt 4, incluyendo estructura de carpetas, comandos de desarrollo (`dev`) y compilación (`build`).
 
-2. **Vue 3 Composition API - Reactivity Fundamentals:**
+2. **Nuxt 4 Documentation - Features (v4.0):**
+   *URL:* https://nuxt.com/docs/features/introduction
+   *Uso:* Guía de funcionalidades clave como Auto-Imports, Server Routes, Runtime Configuration y el comportamiento híbrido SSR/CSR.
+
+3. **Vue 3 Composition API - Reactivity Fundamentals:**
    *URL:* https://vuejs.org/guide/essentials/reactivity-fundamentals.html
    *Uso:* Implementación de `ref`, `computed` y flujos reactivos.
 
-3. **OpenWeatherMap - Current Weather Data (2.5) API Docs:**
+4. **OpenWeatherMap - Current Weather Data (2.5) API Docs:**
    *URL:* https://openweathermap.org/current
    *Uso:* Estructuración de las peticiones HTTP y mapeo de las respuestas (JSON) y parámetros permitidos.
 

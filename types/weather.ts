@@ -9,6 +9,13 @@ export interface WeatherMain {
 
 export interface WeatherWind {
   speed: number;
+  deg?: number;
+}
+
+export interface WeatherSys {
+  country: string;
+  sunrise?: number;
+  sunset?: number;
 }
 
 export interface WeatherDescription {
@@ -18,14 +25,13 @@ export interface WeatherDescription {
 
 export interface WeatherResponse {
   name: string;
-  sys: {
-    country: string;
-  };
+  sys: WeatherSys;
   main: WeatherMain;
   wind: WeatherWind;
   weather: WeatherDescription[];
   dt: number;
   visibility?: number;
+  timezone?: number;
 }
 
 export interface WeatherHistory {

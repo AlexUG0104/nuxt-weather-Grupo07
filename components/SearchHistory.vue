@@ -33,16 +33,30 @@
         class="chip-item"
         :style="{ '--delay': `${index * 0.04}s` }"
       >
-        <button
-          class="chip"
-          @click="$emit('select', item.city)"
-          :title="`Buscar ${item.city} — ${formatDate(item.date)}`"
-          type="button"
-        >
-          <span class="chip-dot" aria-hidden="true"></span>
-          <span class="chip-city">{{ item.city }}</span>
-          <span class="chip-time">{{ formatDate(item.date) }}</span>
-        </button>
+        <div class="chip-wrapper">
+          <button
+            class="chip-main"
+            @click="$emit('select', item.city)"
+            :title="`Buscar ${item.city} — ${formatDate(item.date)}`"
+            type="button"
+          >
+            <span class="chip-dot" aria-hidden="true"></span>
+            <span class="chip-city">{{ item.city }}</span>
+            <span class="chip-time">{{ formatDate(item.date) }}</span>
+          </button>
+          <button
+            class="chip-remove"
+            @click.stop="$emit('remove', item.city)"
+            title="Eliminar del historial"
+            aria-label="Eliminar"
+            type="button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
       </li>
     </ul>
 
@@ -58,6 +72,7 @@ defineProps<{
 
 defineEmits<{
   (e: 'select', city: string): void;
+  (e: 'remove', city: string): void;
   (e: 'clear'): void;
 }>();
 
@@ -192,34 +207,66 @@ const formatDate = (isoString: string) => {
   animation: slideInLeft 0.3s var(--ease-out) var(--delay, 0s) both;
 }
 
-/* ── Single chip ────────────────────────────── */
-.chip {
+/* ── Single chip wrapper ─────────────────────── */
+.chip-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 14px 7px 10px;
   background: rgba(99,102,241,0.06);
   border: 1px solid rgba(99,102,241,0.15);
   border-radius: var(--radius-full);
-  cursor: pointer;
   transition:
     background var(--duration-fast),
     border-color var(--duration-fast),
     transform var(--duration-base) var(--ease-smooth),
     box-shadow var(--duration-base);
+}
+
+.chip-wrapper:hover {
+  background: rgba(99,102,241,0.13);
+  border-color: rgba(99,102,241,0.38);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99,102,241,0.18);
+}
+
+.chip-wrapper:active {
+  transform: scale(0.98);
+}
+
+.chip-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
   text-align: left;
   font-family: var(--font-body);
 }
 
-.chip:hover {
-  background: rgba(99,102,241,0.14);
-  border-color: rgba(99,102,241,0.38);
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.18);
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background var(--duration-fast), color var(--duration-fast);
 }
 
-.chip:active {
-  transform: scale(0.97);
+.chip-remove:hover {
+  background: rgba(248, 113, 113, 0.16);
+  color: var(--color-error);
+}
+
+.chip-remove svg {
+  width: 10px;
+  height: 10px;
 }
 
 .chip-dot {

@@ -82,11 +82,11 @@
               <span class="suggest-label">Prueba con:</span>
               <button
                 v-for="city in suggestedCities"
-                :key="city"
+                :key="city.name"
                 class="suggest-chip"
-                @click="handleSearch(city)"
+                @click="handleSearch(city.name)"
                 type="button"
-              >{{ city }}</button>
+              >{{ city.display }}</button>
             </div>
           </div>
         </Transition>
@@ -101,6 +101,7 @@
         <SearchHistory
           :history="history"
           @select="handleSearch"
+          @remove="handleRemoveSearch"
           @clear="clearHistory"
         />
       </section>
@@ -138,17 +139,36 @@ useHead({
 });
 
 const { weather, loading, error, searchWeather } = useWeather();
-const { history, saveSearch, clearHistory } = useSearchHistory();
+const { history, saveSearch, removeSearch, clearHistory } = useSearchHistory();
 
-const suggestedCities = ['San José', 'Madrid', 'Tokyo', 'New York', 'París'];
+const suggestedCities = [
+  { name: 'San José, CR', display: 'San José 🇨🇷' },
+  { name: 'Madrid, ES', display: 'Madrid 🇪🇸' },
+  { name: 'Tokyo, JP', display: 'Tokio 🇯🇵' },
+  { name: 'New York, US', display: 'Nueva York 🇺🇸' },
+  { name: 'Paris, FR', display: 'París 🇫🇷' }
+];
 
-// NUEVO: Variable para recordar la última búsqueda
+// Variable para recordar la última búsqueda
 const lastQuery = ref<string>('');
 
 const handleSearch = async (city: string) => {
-  lastQuery.value = city; // Guardamos el intento
-  const success = await searchWeather(city);
-  if (success) saveSearch(city);
+  let query = city.trim();
+  // Normalizar búsqueda si el usuario ingresa San José solo,
+  // de modo que siempre use San José, Costa Rica (CR) como destino principal.
+  const normalized = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (normalized === 'san jose') {
+    query = 'San José, CR';
+  }
+  lastQuery.value = query; // Guardamos el intento
+  const success = await searchWeather(query);
+  if (success && weather.value) {
+    saveSearch(`${weather.value.name}, ${weather.value.sys.country}`);
+  }
+};
+
+const handleRemoveSearch = (city: string) => {
+  removeSearch(city);
 };
 
 // NUEVO: Función para reintentar
@@ -169,7 +189,7 @@ const updateClock = () => {
   }).format(new Date());
 };
 
-const DEFAULT_CITY = 'San José';
+const DEFAULT_CITY = 'San José, CR';
 
 onMounted(() => {
   updateClock();

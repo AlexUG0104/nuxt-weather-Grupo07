@@ -24,8 +24,8 @@
         <div class="location-text">
           <h2 class="city-name">{{ weather.name }}</h2>
           <div class="city-meta">
-            <span class="country-badge">
-              {{ weather.sys.country }}
+            <span class="country-badge" :title="getCountryName(weather.sys.country)">
+              {{ getFlagEmoji(weather.sys.country) }} {{ getCountryName(weather.sys.country) }}
             </span>
             <span class="meta-sep">·</span>
             <time class="date-str" :datetime="new Date().toISOString()">{{ formattedDate }}</time>
@@ -37,12 +37,12 @@
       <div class="icon-wrap">
         <div class="icon-glow" aria-hidden="true"></div>
         <img
-          :src="`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`"
-          :alt="weather.weather[0].description"
+          :src="`https://openweathermap.org/img/wn/${weather.weather?.[0]?.icon || ''}@4x.png`"
+          :alt="weather.weather?.[0]?.description || ''"
           class="weather-icon"
           loading="lazy"
         />
-        <span class="condition-badge">{{ weather.weather[0].description }}</span>
+        <span class="condition-badge">{{ weather.weather?.[0]?.description || '' }}</span>
       </div>
     </header>
 
@@ -118,7 +118,7 @@
           <div class="detail-bar">
             <div class="detail-bar-fill" :style="{ width: Math.min(weather.wind.speed * 5, 100) + '%' }"></div>
           </div>
-          <span class="detail-bar-pct">{{ weather.wind.speed }} m/s</span>
+          <span class="detail-bar-pct">{{ getWindDirection(weather.wind.deg ?? 0) }}</span>
         </div>
       </div>
 
@@ -161,7 +161,58 @@
         </div>
       </div>
 
+      <!-- Sunrise Card -->
+      <div class="detail-card" v-if="sunriseTime" style="--detail-color: #fb7185; --detail-color-alpha: rgba(251,113,133,0.12);">
+        <div class="detail-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 22H6"/>
+            <path d="m12 18-4-4h8z"/>
+            <path d="M12 2v8"/>
+            <path d="m5.22 10.22 1.42 1.42"/>
+            <path d="m17.36 11.64 1.42-1.42"/>
+            <path d="M22 22H2"/>
+            <path d="M16 22a4 4 0 0 0-8 0"/>
+          </svg>
+        </div>
+        <div class="detail-info">
+          <span class="detail-label">Amanecer</span>
+          <span class="detail-value">{{ sunriseTime }}</span>
+        </div>
+        <div class="detail-bar-wrap">
+          <span class="detail-bar-pct">Salida del sol</span>
+        </div>
+      </div>
+
+      <!-- Sunset Card -->
+      <div class="detail-card" v-if="sunsetTime" style="--detail-color: #f59e0b; --detail-color-alpha: rgba(245,158,11,0.12);">
+        <div class="detail-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 22H6"/>
+            <path d="M16 22a4 4 0 0 0-8 0"/>
+            <path d="M12 2v8"/>
+            <path d="m16 6-4 4-4-4"/>
+            <path d="M22 22H2"/>
+          </svg>
+        </div>
+        <div class="detail-info">
+          <span class="detail-label">Atardecer</span>
+          <span class="detail-value">{{ sunsetTime }}</span>
+        </div>
+        <div class="detail-bar-wrap">
+          <span class="detail-bar-pct">Puesta del sol</span>
+        </div>
+      </div>
+
     </section>
+
+    <!-- ── RECOMMENDATION BANNER ──────────────── -->
+    <footer class="recommendation-banner" v-if="weatherRecommendation">
+      <div class="rec-icon">💡</div>
+      <div class="rec-content">
+        <span class="rec-title">Sugerencia WeatherVue</span>
+        <p class="rec-text">{{ weatherRecommendation }}</p>
+      </div>
+    </footer>
 
   </article>
 </template>
@@ -175,13 +226,88 @@ const props = defineProps<{
 }>();
 
 const formattedDate = computed(() => {
+  if (!props.weather) return '';
+  // Calcular hora local del destino según el timezone offset retornado por OpenWeather
+  const utc = Date.now() + (new Date().getTimezoneOffset() * 60000);
+  const localTime = new Date(utc + ((props.weather.timezone ?? 0) * 1000));
   return new Intl.DateTimeFormat('es-ES', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date());
+    minute: '2-digit',
+    hour12: true
+  }).format(localTime);
+});
+
+const getFlagEmoji = (countryCode: string) => {
+  if (!countryCode) return '';
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  try {
+    return String.fromCodePoint(...codePoints);
+  } catch (e) {
+    return '';
+  }
+};
+
+const getCountryName = (countryCode: string) => {
+  if (!countryCode) return '';
+  try {
+    const regionNames = new Intl.DisplayNames(['es'], { type: 'region' });
+    return regionNames.of(countryCode) || countryCode;
+  } catch (e) {
+    return countryCode;
+  }
+};
+
+const getWindDirection = (deg: number) => {
+  if (deg == null) return '';
+  const directions = ['Norte 🧭', 'Nordeste ↗️', 'Este ➡️', 'Sudeste ↘️', 'Sur 🧭', 'Suroeste ↙️', 'Oeste ⬅️', 'Noroeste ↖️'];
+  const idx = Math.round(((deg % 360) / 45)) % 8;
+  return directions[idx];
+};
+
+const formatUnixTime = (unixSeconds: number, timezoneOffset: number) => {
+  const utc = (unixSeconds * 1000) + (new Date().getTimezoneOffset() * 60000);
+  const localTime = new Date(utc + (timezoneOffset * 1000));
+  return new Intl.DateTimeFormat('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).format(localTime);
+};
+
+const sunriseTime = computed(() => {
+  if (!props.weather?.sys?.sunrise) return '';
+  return formatUnixTime(props.weather.sys.sunrise, props.weather.timezone ?? 0);
+});
+
+const sunsetTime = computed(() => {
+  if (!props.weather?.sys?.sunset) return '';
+  return formatUnixTime(props.weather.sys.sunset, props.weather.timezone ?? 0);
+});
+
+const weatherRecommendation = computed(() => {
+  if (!props.weather) return '';
+  const temp = props.weather.main.temp;
+  const icon = props.weather.weather?.[0]?.icon ?? '';
+  const description = props.weather.weather?.[0]?.description?.toLowerCase() ?? '';
+
+  if (icon.includes('11')) return 'Tormenta eléctrica en curso. Mantente bajo techo y evita aparatos eléctricos. ⚡';
+  if (icon.includes('09') || icon.includes('10') || description.includes('lluvia') || description.includes('llovizna')) {
+    return 'Se pronostica lluvia. No olvides tu paraguas o impermeable. 🌧️☔';
+  }
+  if (icon.includes('13') || description.includes('nieve')) return 'Nieve y bajas temperaturas. Vístete en capas y ten precaución al caminar. ❄️🧣';
+  if (temp >= 30) return 'Calor intenso. Usa protector solar, mantente hidratado y evita la exposición directa al sol. ☀️🥤';
+  if (temp <= 12) return 'Clima frío. Usa ropa abrigada y protege tu garganta. ❄️🧥';
+  if (description.includes('niebla') || description.includes('neblina') || icon.includes('50')) {
+    return 'Visibilidad reducida por niebla. Conduce con precaución y usa luces bajas. 🌫️🚗';
+  }
+  if (icon.includes('01')) return 'Cielo despejado. ¡Un día excelente para actividades al aire libre! ☀️😎';
+  return 'Condiciones climáticas estables. ¡Disfruta tu día! 🍀';
 });
 
 // Dynamic accent based on weather condition
@@ -230,6 +356,16 @@ const weatherTheme = computed(() => {
     0 28px 80px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255,255,255,0.05) inset,
     0 1px 0 rgba(255,255,255,0.12) inset;
+  transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base), border-color var(--duration-base);
+}
+
+.weather-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 38px 90px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255,255,255,0.08) inset,
+    0 1px 0 rgba(255,255,255,0.18) inset;
 }
 
 /* ── Top bar ──────────────────────────────────── */
@@ -330,15 +466,15 @@ const weatherTheme = computed(() => {
 }
 
 .country-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 3px 10px;
   background: rgba(99,102,241,0.12);
   border: 1px solid rgba(99,102,241,0.22);
   border-radius: var(--radius-full);
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--color-accent);
 }
 
@@ -635,5 +771,64 @@ const weatherTheme = computed(() => {
 
   .details-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .detail-bar-pct { display: none; }
+}
+
+/* ── Recommendation Banner ─────────────────── */
+.recommendation-banner {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.022);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--duration-base), border-color var(--duration-base);
+  text-align: left;
+}
+
+.recommendation-banner:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.recommendation-banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--card-accent);
+}
+
+.rec-icon {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatY 3s ease-in-out infinite;
+}
+
+.rec-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rec-title {
+  font-size: 0.70rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  color: var(--card-accent);
+}
+
+.rec-text {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
 </style>
